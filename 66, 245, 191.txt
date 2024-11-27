@@ -1,0 +1,125 @@
+66, 245, 191
+
+# 이미지 클래스에 speed 속성 추가
+import pygame
+
+# 1. 초기화 -> 변수의 선언
+pygame.init()
+
+# 2. 게임 화면 설정 -> 고정값
+size = [600, 800]
+screen = pygame.display.set_mode(size)
+title = 'pyamge example'
+pygame.display.set_caption(title)
+
+# 3. 게임 내에서의 설정 -> 변수
+clock = pygame.time.Clock()
+color = (83, 104, 154)
+
+class Img:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        # self.speed = 0
+
+    def img_load(self, address):
+        self.img = pygame.image.load(address)
+
+    def change_size(self, width, height):
+        self.img = pygame.transform.scale(self.img, (width, height))
+        # self.width, self.height = self.img.get_size()
+        self.width = width
+        self.height = height
+
+    def show_img(self):
+        screen.blit(self.img, (self.x, self.y))
+
+    def set_speed(self, speed):
+        self.speed = speed
+
+hero = Img()
+hero.img_load('C:\Users\82109\OneDrive\바탕 화면\pygame\images.jpg')
+hero.change_size(100, 150)
+hero.x = (size[0]/2) - (hero.width/2)
+hero.y = size[1] - hero.height - 30
+# hero.speed = 7
+hero.set_speed(7)
+
+# hero = pygame.image.load('C:\Users\82109\OneDrive\바탕 화면\pygame\images.jpg')
+# hero = pygame.transform.scale(hero, (100, 150))
+# hero_width, hero_height = hero.get_size()
+
+enemy = Img()
+enemy.img_load('C:\Users\82109\OneDrive\바탕 화면\pygame\enemy.png')
+enemy.change_size(80, 80)
+enemy.x = 300
+enemy.y = 10
+# enemy = pygame.image.load('C:\Users\82109\OneDrive\바탕 화면\pygame\enemy.png')
+# enemy = pygame.transform.scale(enemy, (80, 80))
+# enemy_width, enemy_height = enemy.get_size()
+
+right_move = False
+left_move = False
+up_move = False
+down_move = False
+
+# 4. 메인 이벤트
+system = 0
+while system == 0:
+# 4-1. FPS(Frame per sec) 설정
+    clock.tick(30)
+
+# 4-2. 입력(키보드,마우스)의 감지 -> 활용
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            system = 1
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                left_move = True
+            if event.key == pygame.K_RIGHT:
+                right_move = True
+            if event.key == pygame.K_UP:
+                up_move = True
+            if event.key == pygame.K_DOWN:
+                down_move = True
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                left_move = False
+            if event.key == pygame.K_RIGHT:
+                right_move = False
+            if event.key == pygame.K_UP:
+                up_move = False
+            if event.key == pygame.K_DOWN:
+                down_move = False
+# 4-3. 입력에 따른 변화, 시간에 따른 변화
+    if right_move == True :
+        hero.x += hero.speed
+    if left_move == True :
+        hero.x -= hero.speed
+    if up_move == True :
+        hero.y -= hero.speed
+    if down_move == True :
+        hero.y += hero.speed
+
+    if hero.x < 0:
+        hero.x = 0
+    if hero.x > (size[0] - hero.width):
+        hero.x = size[0] - hero.width
+    if hero.y < 0:
+        hero.y = 0
+    if hero.y > size[1] - hero.height:
+        hero.y = size[1] - hero.height
+
+# 4-4. 전사작업(그리기)
+    screen.fill(color)
+    hero.show_img()
+    # screen.blit(hero, (hero_x, hero_y))
+    enemy.show_img()
+    # screen.blit(enemy, (300,10))
+# 4-5. 업데이트
+    pygame.display.flip()
+
+# 5. 종료(x버튼, game over)
+pygame.quit()
